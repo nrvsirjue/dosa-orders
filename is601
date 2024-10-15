@@ -1,0 +1,13 @@
+import json, argparse
+
+class Midterm():
+    def __init__(self,file):
+        with open(self.file,"r") as file_reader:
+            self.data = json.load(file_reader)
+            print("Orders loaded.")
+
+    parser = argparse.ArgumentParser(description = 'Reads your orders from JSON file')
+    parser.add_argument("file_name", type=str, help="Name of the file with your orders")
+    args = parser.parse_args()
+
+    print(f"File Name: {args.file_name}")
