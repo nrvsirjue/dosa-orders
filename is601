@@ -22,15 +22,12 @@ class JSONFile:
         customers = {}
         phone_pattern = re.compile(r"^\d{3}-\d{3}-\d{4}$")      
         for item in self.data:
-                phone = item.get('phone')
-                name = item.get('name')
+                phone = str(item.get('phone'))
+                name = str(item.get('name'))
                 if phone and name:
                     if phone_pattern.match(phone):
                         if phone not in customers:
                             customers[phone] = name
-                        else:
-                            if customers[phone] != name:
-                                print(f"Different customer name associated with phone number.")
 
         with open(self.customer_file, "w") as customer_information:
             json.dump(customers, customer_information, indent=4)
@@ -41,7 +38,7 @@ class JSONFile:
         for item in self.data:
             orders = item.get('items')
             for order in orders:
-                item_name = order.get("name")
+                item_name = str(order.get("name"))
                 item_price = order.get("price")
                 if item_name not in items:
                     items[item_name] = {
