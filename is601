@@ -24,13 +24,10 @@ class JSONFile:
                 name = item.get('name')
                 if phone and name:
                     if phone not in customers:
-                        customers[phone] = []
-                    if name not in customers[phone]:
-                        customers[phone].append(name)
+                        customers[phone] = name
                 else:
-                    customers[phone] = name
-            except KeyError:
-                print(f"Entry skipped due to missing item: {item}")
+                    if customers[phone] != name:
+                        print(f"Different customer name associated with phone number.")
 
         with open(self.customer_file, "w") as customer_information:
             json.dump(customers, customer_information, indent=4)
