@@ -1,13 +1,53 @@
-import json, argparse
+import json, argparse, os
 
-class Midterm():
-    def __init__(self,file):
-        with open(self.file,"r") as file_reader:
-            self.data = json.load(file_reader)
-            print("Orders loaded.")
+class JSONFile:
+    def __init__(self,file, customer_file):
+        self.file = file
+        self.customer_file = customer_file
+        self.data = []
 
+        if os.path.exists(self.file):
+            print("The file exists.")
+            try:
+                with open(self.file,"r") as file_reader:
+                    self.data = json.load(file_reader)
+                    print("Orders loaded.")
+            except json.JSONDecodeError:
+                print(f"Error - The file '{self.file}' is not a JSON file")
+        else:
+            print("The file does not exist.")
+    
+    def customers(self):
+        customers = {}
+        for item in self.data:
+                phone = item.get('phone')
+                name = item.get('name')
+                if phone and name:
+                    if phone not in customers:
+                        customers[phone] = []
+                    if name not in customers[phone]:
+                        customers[phone].append(name)
+                else:
+                    customers[phone] = name
+            except KeyError:
+                print(f"Entry skipped due to missing item: {item}")
+
+        with open(self.customer_file, "w") as customer_information:
+            json.dump(customers, customer_information, indent=4)
+        print("The customer file has been created.")
+
+def main():
     parser = argparse.ArgumentParser(description = 'Reads your orders from JSON file')
     parser.add_argument("file_name", type=str, help="Name of the file with your orders")
+    parser.add_argument("customer_file", type=str, help="Name of the file with customer information")
     args = parser.parse_args()
 
-    print(f"File Name: {args.file_name}")
+    print(f"Original File Name: {args.file_name}")
+    print(f"Customer File Name: {args.customer_file}")
+    
+    json_file = JSONFile(args.file_name, args.customer_file)
+    json_file.customers()
+
+
+if __name__ == "__main__":
+    main()
