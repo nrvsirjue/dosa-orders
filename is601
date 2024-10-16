@@ -1,17 +1,18 @@
 import json, argparse, os
 
 class JSONFile:
-    def __init__(self,file, customer_file):
+    def __init__(self,file, customer_file, item_file):
         self.file = file
         self.customer_file = customer_file
+        self.item_file = item_file
         self.data = []
 
         if os.path.exists(self.file):
-            print("The file exists.")
+            print("The original file exists.")
             try:
                 with open(self.file,"r") as file_reader:
                     self.data = json.load(file_reader)
-                    print("Orders loaded.")
+                    print("Orders loaded from the original file.")
             except json.JSONDecodeError:
                 print(f"Error - The file '{self.file}' is not a JSON file")
         else:
@@ -33,17 +34,38 @@ class JSONFile:
             json.dump(customers, customer_information, indent=4)
         print("The customer file has been created.")
 
+    def items(self):
+        items = {}
+        for item in self.data:
+            orders = item.get('items')
+            for order in orders:
+                item_name = order.get("name")
+                item_price = order.get("price")
+                if item_name not in items:
+                    items[item_name] = {
+                        "price" : item_price,
+                        "orders" : 0
+                    }
+                items[item_name]["orders"] +=1
+            
+        with open(self.item_file,"w") as item_information:
+            json.dump(items, item_information, indent=4)
+        print("The file of items, with prices and number of times ordered, has been created.")
+
 def main():
     parser = argparse.ArgumentParser(description = 'Reads your orders from JSON file')
     parser.add_argument("file_name", type=str, help="Name of the file with your orders")
     parser.add_argument("customer_file", type=str, help="Name of the file with customer information")
+    parser.add_argument("item_file", type=str, help="Name of the file with item information from orders")
     args = parser.parse_args()
 
     print(f"Original File Name: {args.file_name}")
     print(f"Customer File Name: {args.customer_file}")
+    print(f"Item File Name: {args.item_file}")
     
-    json_file = JSONFile(args.file_name, args.customer_file)
+    json_file = JSONFile(args.file_name, args.customer_file, args.item_file)
     json_file.customers()
+    json_file.items()
 
 
 if __name__ == "__main__":
