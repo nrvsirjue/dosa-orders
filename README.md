@@ -1,4 +1,4 @@
-# midterm-project
+# dosa-orders
 A repository created to help better keep track of individual orders received from a Dosa restaurant, containing the customers name, phone number, and their orders.
  
 Using the code provided in the is601 file, the company will be able to provide a copy of the individual orders that they have received over time in a JSON file, and get out two additional JSON files. 
